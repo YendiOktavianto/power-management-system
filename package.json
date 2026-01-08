@@ -1,0 +1,27 @@
+{
+  "name": "ems-medium-segment",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "npm@10.9.3",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.10",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "cross-env": "^10.0.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.9.2"
+  },
+  "overrides": {}
+}

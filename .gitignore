@@ -1,0 +1,18 @@
+node_modules/
+apps/**/node_modules/
+.env
+.env.*
+*.zip
+*.log
+.vscode
+
+.turbo/
+.next/
+dist
+coverage
+
+# backend
+apps/backend/dist/
+apps/backend/.turbo/
+apps/backend/node_modules/
+apps/backend/*.log
