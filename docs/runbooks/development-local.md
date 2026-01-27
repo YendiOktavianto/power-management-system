@@ -6,7 +6,7 @@ Dokumen ini menjelaskan cara menjalankan Power Management System di environment 
 - Node.js (LTS)
 - npm
 - Docker + Docker Compose (jika service lokal memakai container)
-- (Opsional) PlatformIO untuk firmware ESP32
+- (Opsional) PlatformIO untuk firmware ESP32v
 - (Opsional) Flutter SDK jika mobile app ada di repo / terkait proses testing
 
 ## Repo Setup
