@@ -25,3 +25,4 @@
 ## 6) Demo/Testing (Owner Testing Account)
 - Owner testing account dipakai untuk demo hardware saat Customer belum membeli.
 - Data demo dapat dipakai untuk kebutuhan logger dan summary marketing.
+ 

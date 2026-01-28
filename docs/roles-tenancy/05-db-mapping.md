@@ -129,6 +129,7 @@ Detail kolom (telemetry_readings):
 - telemetry_id (uuid): primary key.
 - device_id (uuid): FK ke devices.device_id.
 - recorded_at (timestamptz): waktu pengukuran (utama untuk query).
+- cost_id (uuid, nullable): FK ke cost.cost_id (tarif yang berlaku saat itu).
 - voltage (numeric): tegangan.
 - current (numeric): arus.
 - frequency (numeric): frekuensi.
