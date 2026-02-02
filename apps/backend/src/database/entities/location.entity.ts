@@ -1,30 +1,40 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  JoinColumn,
-  OneToOne,
-  Unique,
-  ManyToOne,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Address } from './address.entity';
-import { GeneralInfo } from './general-info.entity';
+import { Device } from './device.entity';
 
-@Entity('location')
-@Unique(['device'])
-@Unique(['address'])
+@Entity('locations')
 export class Location {
   @PrimaryGeneratedColumn('uuid', { name: 'location_id' })
   location_id!: string;
 
-  @Column({ name: 'segment', type: 'varchar', nullable: true })
-  segment!: string;
+  @Column({ name: 'address_id', type: 'uuid' })
+  address_id!: string;
 
-  @ManyToOne(() => Address, { onDelete: 'RESTRICT' })
+  @Column({ name: 'location_label', type: 'varchar' })
+  location_label!: string;
+
+  @Column({ name: 'detail_address', type: 'varchar', nullable: true })
+  detail_address?: string | null;
+
+  @Column({ name: 'segment', type: 'varchar', nullable: true })
+  segment?: string | null;
+
+  @Column({ name: 'is_active', type: 'boolean', default: true })
+  is_active!: boolean;
+
+  @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  created_at!: Date;
+
+  @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  updated_at!: Date;
+
+  @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deleted_at?: Date | null;
+
+  @ManyToOne(() => Address, (addr) => addr.locations, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'address_id', referencedColumnName: 'address_id' })
   address!: Address;
 
-  @OneToOne(() => GeneralInfo, (g) => g.location, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'device_id', referencedColumnName: 'device_id' })
-  device!: GeneralInfo;
+  @OneToMany(() => Device, (d) => d.location)
+  devices!: Device[];
 }

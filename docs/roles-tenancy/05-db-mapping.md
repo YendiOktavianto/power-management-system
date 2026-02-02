@@ -39,10 +39,10 @@ Detail kolom (organizations):
 - name (varchar): nama organisasi.
 - type (enum OWNER/PRINCIPAL/COMPANY/CUSTOMER): level organisasi.
 - parent_id (uuid, nullable): relasi ke org parent; null untuk OWNER.
-- is_active (boolean): status aktif organisasi.
+- is_active (boolean, default true): status aktif organisasi.
 - created_at (timestamptz, default now()): waktu pembuatan org.
 - updated_at (timestamptz, default now()): waktu update terakhir org.
-- deleted_at (timestamptz, default now()): penanda soft delete.
+- deleted_at (timestamptz, nullable): penanda soft delete.
 
 3) organization_members
 Menghubungkan user dengan organisasi dan role di dalam org.

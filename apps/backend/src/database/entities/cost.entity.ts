@@ -1,32 +1,30 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { CostHistory } from './cost-history.entity';
-import { MonitoringInfo } from './monitoring-info.entity';
-
-export enum GolTarif {
-  R1_TR = 'R-1/TR',
-  R2_TR = 'R-2/TR',
-  R3_TR = 'R-3/TR',
-}
+import { TelemetryReading } from './telemetry-reading.entity';
 
 @Entity('cost')
 export class Cost {
-  @PrimaryGeneratedColumn({ name: 'cost_id', type: 'int' })
-  cost_id!: number;
+  @PrimaryGeneratedColumn('uuid', { name: 'cost_id' })
+  cost_id!: string;
 
-  // Contoh nilai: "R-1/TR", "R-2/TR", dst.
-  @Column({
-    type: 'enum',
-    enum: GolTarif,
-    enumName: 'gol_tarif_enum',
-  })
-  tariff_group: GolTarif;
+  @Column({ name: 'tariff_group', type: 'varchar' })
+  tariff_group!: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  power_limit: string;
+  @Column({ name: 'power_limit', type: 'varchar' })
+  power_limit!: string;
 
-  @OneToMany(() => MonitoringInfo, (m) => m.cost)
-  monitoringInfos: MonitoringInfo[];
+  @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  created_at!: Date;
+
+  @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  updated_at!: Date;
+
+  @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deleted_at?: Date | null;
 
   @OneToMany(() => CostHistory, (h) => h.cost)
   histories!: CostHistory[];
+
+  @OneToMany(() => TelemetryReading, (t) => t.cost)
+  telemetry_readings!: TelemetryReading[];
 }

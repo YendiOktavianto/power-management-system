@@ -1,31 +1,31 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Index,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity('contents')
 export class ContentEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('uuid', { name: 'content_id' })
+  content_id!: string;
 
   @Index({ unique: true })
   @Column({ type: 'varchar', length: 120 })
   key: string;
 
-  // PostgreSQL: jsonb ; MySQL: pakai 'json'
-  @Column({ type: process.env.DB_TYPE === 'mysql' ? 'json' : 'jsonb', default: {} })
-  data: Record<string, any>;
+  @Column({ type: process.env.DB_TYPE === 'mysql' ? 'json' : 'jsonb' })
+  data!: Record<string, any>;
 
-  @Column({ type: 'varchar', length: 120, nullable: true })
-  updatedBy?: string;
+  @Column({ name: 'updated_by', type: 'uuid', nullable: true })
+  updated_by?: string | null;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  created_at!: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  updated_at!: Date;
+
+  @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deleted_at?: Date | null;
+
+  @ManyToOne(() => User, (u) => u.contents_updated, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'updated_by', referencedColumnName: 'userId' })
+  updated_by_user: User | null;
 }
