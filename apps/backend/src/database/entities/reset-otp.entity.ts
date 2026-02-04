@@ -5,35 +5,38 @@ import { User } from './user.entity';
 @Index('idx_reset_otp_exp', ['expires_at'])
 export class ResetOtp {
   @PrimaryGeneratedColumn('uuid')
-  otp_id!: string;
+  otpId!: string;
 
-  @Column({ type: 'varchar', length: 32, default: 'password_reset' })
+  @Column({ name: 'user_id', type: 'uuid' })
+  userId!: string;
+
+  @Column({ name: 'purpose', type: 'varchar', length: 32, default: 'password_reset' })
   purpose!: string;
 
-  @Column({ type: 'varchar', length: 64 })
+  @Column({ name: 'code_hash', type: 'varchar', length: 64 })
   @Index('idx_reset_otp_code_hash')
-  code_hash!: string;
+  codeHash!: string;
 
-  @Column({ type: 'timestamptz' })
-  expires_at!: Date;
+  @Column({ name: 'expires_at', type: 'timestamptz' })
+  expiresAt!: Date;
 
-  @Column({ type: 'timestamptz', nullable: true })
-  used_at!: Date | null;
+  @Column({ name: 'used_at', type: 'timestamptz', nullable: true })
+  usedAt!: Date | null;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'attempts', type: 'int', default: 0 })
   attempts!: number;
 
-  @Column({ type: 'int', default: 0 })
-  resend_count!: number;
+  @Column({ name: 'resend_count', type: 'int', default: 0 })
+  resendCount!: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'ip', type: 'varchar', length: 255, nullable: true })
   ip?: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  user_agent?: string;
+  @Column({ name: 'user_agent', type: 'varchar', length: 255, nullable: true })
+  userAgent?: string;
 
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at!: Date;
+  @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt!: Date;
 
   @ManyToOne(() => User, (u) => u.otps, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'userId' })

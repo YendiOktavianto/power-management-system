@@ -33,7 +33,7 @@ export class UsersService {
     const [emailUser, usernameUser, phoneUser] = await Promise.all([
       this.repo.findOne({ where: { email: ILike(email) } }),
       this.repo.findOne({ where: { username: ILike(username) } }),
-      this.repo.findOne({ where: { phone_number: phone } }),
+      this.repo.findOne({ where: { phoneNumber: phone } }),
     ]);
 
     const errors: Record<string, string> = {};
@@ -46,12 +46,12 @@ export class UsersService {
       throw new ConflictException({ message: 'Duplicate fields', errors });
     }
 
-    const password_hash = await argon2.hash(params.password);
+    const passwordHash = await argon2.hash(params.password);
     const user = this.repo.create({
       email: params.email,
       username: params.username,
-      phone_number: params.phone_number,
-      password_hash,
+      phoneNumber: params.phone_number,
+      passwordHash,
       role: params.role ?? UserRole.USER,
     });
     return this.repo.save(user);
@@ -67,11 +67,11 @@ export class UsersService {
   async validateUserByIdentifier(identifier: string, password: string) {
     const user = await this.findByEmailOrUsername(identifier);
     if (!user) return null;
-    const ok = await argon2.verify(user.password_hash, password);
+    const ok = await argon2.verify(user.passwordHash, password);
     return ok ? user : null;
   }
 
   async updatePasswordHash(userId: string, password_hash: string) {
-    await this.repo.update({ userId }, { password_hash });
+    await this.repo.update({ userId }, { passwordHash: password_hash });
   }
 }

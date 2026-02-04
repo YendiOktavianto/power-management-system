@@ -74,7 +74,7 @@ export class DeviceRequest {
   @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   updated_at!: Date;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (u) => u.deviceRequests, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'requester_user_id', referencedColumnName: 'userId' })
   requester!: User;
 
@@ -87,18 +87,18 @@ export class DeviceRequest {
   target_org!: Organization;
 
   @ManyToOne(() => Address, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'address_id', referencedColumnName: 'address_id' })
+  @JoinColumn({ name: 'address_id', referencedColumnName: 'addressId' })
   address?: Address | null;
 
-  @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, (u) => u.approvedDeviceRequests, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'approved_by', referencedColumnName: 'userId' })
   approver?: User | null;
 
-  @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, (u) => u.rejectedDeviceRequests, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'rejected_by', referencedColumnName: 'userId' })
   rejecter?: User | null;
 
-  @OneToOne(() => Device, (d) => d.device_request, { onDelete: 'SET NULL' })
+  @OneToOne(() => Device, (d) => d.deviceRequest, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'device_id', referencedColumnName: 'device_id' })
   device?: Device | null;
 }

@@ -5,34 +5,34 @@ import { Device } from './device.entity';
 @Entity('locations')
 export class Location {
   @PrimaryGeneratedColumn('uuid', { name: 'location_id' })
-  location_id!: string;
+  locationId!: string;
 
   @Column({ name: 'address_id', type: 'uuid' })
-  address_id!: string;
+  addressId!: string;
 
   @Column({ name: 'location_label', type: 'varchar' })
-  location_label!: string;
+  locationLabel!: string;
 
   @Column({ name: 'detail_address', type: 'varchar', nullable: true })
-  detail_address?: string | null;
+  detailAddress?: string | null;
 
   @Column({ name: 'segment', type: 'varchar', nullable: true })
   segment?: string | null;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
-  is_active!: boolean;
+  isActive!: boolean;
 
   @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at!: Date;
+  createdAt!: Date;
 
   @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
-  deleted_at?: Date | null;
+  deletedAt?: Date | null;
 
   @ManyToOne(() => Address, (addr) => addr.locations, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'address_id', referencedColumnName: 'address_id' })
+  @JoinColumn({ name: 'address_id', referencedColumnName: 'addressId' })
   address!: Address;
 
   @OneToMany(() => Device, (d) => d.location)

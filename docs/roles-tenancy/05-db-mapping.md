@@ -4,8 +4,8 @@ Dokumen ini mencatat rancangan sementara database untuk mendukung multi-tenant,
 struktur role organisasi, serta kebutuhan lokasi dan device.
 
 ## Prinsip Utama
-- Role global hanya ADMIN/USER dan disimpan di users.
-- Role organisasi (OWNER/PRINCIPAL/COMPANY/CUSTOMER) disimpan di membership.
+- Role global hanya ADMIN/USER dan disimpan di users (ADMIN = superuser platform; USER = semua akun biasa, termasuk Principal/Company/Customer).
+- Role organisasi (OWNER/PRINCIPAL/COMPANY/CUSTOMER) disimpan di membership; Principal bukan role global, tapi role_in_org pada organization_members.
 - Kepemilikan device berada di organisasi tipe CUSTOMER.
 - Address adalah titik map (site), sedangkan location adalah spot di dalam site.
 - Latitude/longitude tidak dibuat unik agar banyak device bisa di satu titik.

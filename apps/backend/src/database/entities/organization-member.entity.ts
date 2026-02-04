@@ -17,37 +17,42 @@ export enum OrganizationMemberStatus {
 @Entity('organization_members')
 export class OrganizationMember {
   @PrimaryGeneratedColumn('uuid', { name: 'org_member_id' })
-  org_member_id!: string;
+  orgMemberId!: string;
 
   @Column({ name: 'org_id', type: 'uuid' })
-  org_id!: string;
+  orgId!: string;
 
   @Column({ name: 'user_id', type: 'uuid' })
-  user_id!: string;
+  userId!: string;
 
   @Column({ name: 'role_in_org', type: 'enum', enum: OrganizationMemberRole })
-  role_in_org!: OrganizationMemberRole;
-
-  @Column({ name: 'status', type: 'enum', enum: OrganizationMemberStatus, default: OrganizationMemberStatus.ACTIVE })
-  status!: OrganizationMemberStatus;
+  roleInOrg!: OrganizationMemberRole;
 
   @Column({ name: 'joined_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  joined_at!: Date;
+  joinedAt!: Date;
+
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: OrganizationMemberStatus,
+    default: OrganizationMemberStatus.ACTIVE,
+  })
+  status!: OrganizationMemberStatus;
 
   @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at!: Date;
+  createdAt!: Date;
 
   @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
-  deleted_at?: Date | null;
+  deletedAt?: Date | null;
 
   @ManyToOne(() => Organization, (org) => org.members, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'org_id', referencedColumnName: 'org_id' })
   organization!: Organization;
 
-  @ManyToOne(() => User, (u) => u.organization_members, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (u) => u.organizationMemberships, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'userId' })
   user!: User;
 }

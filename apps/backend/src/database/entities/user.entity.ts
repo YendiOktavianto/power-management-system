@@ -17,62 +17,62 @@ export enum UserStatus {
 }
 
 @Entity('users')
-@Unique(['email', 'username']) // ERD: email unique, not null
+@Unique(['email', 'username'])
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
   userId: string;
 
-  @Column({ length: 60 })
+  @Column({ name: 'username', length: 60 })
   username: string;
 
-  @Column()
-  password_hash: string;
-
-  @Column()
-  phone_number: string;
-
-  @Column()
+  @Column({ name: 'email' })
   email: string;
+
+  @Column({ name: 'phone_number', nullable: true })
+  phoneNumber?: string;
+
+  @Column({ name: 'password_hash' })
+  passwordHash: string;
 
   @Column({ name: 'role_global', type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
+  @Column({ name: 'profil_img', nullable: true })
+  profileImg?: string;
+
+  @Column({ name: 'status', type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
   status: UserStatus;
 
-  @Column({ nullable: true })
-  profil_img?: string;
+  @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at: Date;
-
-  @Column({ type: 'timestamptz', nullable: true })
-  deleted_at?: Date;
+  @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deletedAt?: Date;
 
   @OneToMany(() => ResetOtp, (otp) => otp.user)
   otps!: ResetOtp[];
 
   @OneToMany(() => RefreshSession, (s) => s.user)
-  refresh_sessions!: RefreshSession[];
+  refreshSessions!: RefreshSession[];
 
   @OneToMany(() => OrganizationMember, (m) => m.user)
-  organization_members!: OrganizationMember[];
+  organizationMemberships!: OrganizationMember[];
 
-  @OneToMany(() => Device, (d) => d.provisioned_by)
-  provisioned_devices!: Device[];
+  @OneToMany(() => Device, (d) => d.provisionedBy)
+  provisionedDevices!: Device[];
 
   @OneToMany(() => DeviceRequest, (r) => r.requester)
-  device_requests!: DeviceRequest[];
+  deviceRequests!: DeviceRequest[];
 
   @OneToMany(() => DeviceRequest, (r) => r.approver)
-  approved_device_requests!: DeviceRequest[];
+  approvedDeviceRequests!: DeviceRequest[];
 
   @OneToMany(() => DeviceRequest, (r) => r.rejecter)
-  rejected_device_requests!: DeviceRequest[];
+  rejectedDeviceRequests!: DeviceRequest[];
 
   @OneToMany(() => ContentEntity, (c: ContentEntity) => c.updated_by_user!)
-  contents_updated!: ContentEntity[];
+  contentsUpdated!: ContentEntity[];
 }

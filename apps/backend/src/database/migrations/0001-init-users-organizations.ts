@@ -81,13 +81,19 @@ export class InitUsersOrganizations0001 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "organization_members" DROP CONSTRAINT "FK_org_members_user"`);
-    await queryRunner.query(`ALTER TABLE "organization_members" DROP CONSTRAINT "FK_org_members_org"`);
+    await queryRunner.query(
+      `ALTER TABLE "organization_members" DROP CONSTRAINT "FK_org_members_user"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "organization_members" DROP CONSTRAINT "FK_org_members_org"`,
+    );
     await queryRunner.query(`DROP TABLE "organization_members"`);
     await queryRunner.query(`DROP TYPE "public"."organization_members_status_enum"`);
     await queryRunner.query(`DROP TYPE "public"."organization_members_role_enum"`);
 
-    await queryRunner.query(`ALTER TABLE "organizations" DROP CONSTRAINT "FK_organizations_parent"`);
+    await queryRunner.query(
+      `ALTER TABLE "organizations" DROP CONSTRAINT "FK_organizations_parent"`,
+    );
     await queryRunner.query(`DROP TABLE "organizations"`);
     await queryRunner.query(`DROP TYPE "public"."organizations_type_enum"`);
 

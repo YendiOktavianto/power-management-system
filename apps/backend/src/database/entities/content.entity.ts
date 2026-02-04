@@ -4,7 +4,7 @@ import { User } from './user.entity';
 @Entity('contents')
 export class ContentEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'content_id' })
-  content_id!: string;
+  contentId!: string;
 
   @Index({ unique: true })
   @Column({ type: 'varchar', length: 120 })
@@ -14,18 +14,18 @@ export class ContentEntity {
   data!: Record<string, any>;
 
   @Column({ name: 'updated_by', type: 'uuid', nullable: true })
-  updated_by?: string | null;
+  updatedBy?: string | null;
 
   @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at!: Date;
+  createdAt!: Date;
 
   @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
-  deleted_at?: Date | null;
+  deletedAt?: Date | null;
 
-  @ManyToOne(() => User, (u) => u.contents_updated, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne(() => User, (u) => u.contentsUpdated, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'updated_by', referencedColumnName: 'userId' })
-  updated_by_user: User | null;
+  updatedByUser: User | null;
 }
