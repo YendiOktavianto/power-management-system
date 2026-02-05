@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class DevicesTelemetry0004 implements MigrationInterface {
-  name = '0004-devices-telemetry';
+export class DevicesTelemetry1700000000004 implements MigrationInterface {
+  name = 'DevicesTelemetry1700000000004';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

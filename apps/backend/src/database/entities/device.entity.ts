@@ -57,7 +57,7 @@ export class Device {
   deletedAt?: Date | null;
 
   @ManyToOne(() => Location, (loc) => loc.devices, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'location_id', referencedColumnName: 'location_id' })
+  @JoinColumn({ name: 'location_id', referencedColumnName: 'locationId' })
   location!: Location;
 
   @ManyToOne(() => Organization, (org) => org.devices, { onDelete: 'RESTRICT' })

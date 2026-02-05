@@ -79,11 +79,11 @@ export class DeviceRequest {
   requester!: User;
 
   @ManyToOne(() => Organization, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'requester_org_id', referencedColumnName: 'org_id' })
+  @JoinColumn({ name: 'requester_org_id', referencedColumnName: 'orgId' })
   requester_org!: Organization;
 
   @ManyToOne(() => Organization, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'target_org_id', referencedColumnName: 'org_id' })
+  @JoinColumn({ name: 'target_org_id', referencedColumnName: 'orgId' })
   target_org!: Organization;
 
   @ManyToOne(() => Address, { onDelete: 'SET NULL' })
@@ -99,6 +99,6 @@ export class DeviceRequest {
   rejecter?: User | null;
 
   @OneToOne(() => Device, (d) => d.deviceRequest, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'device_id', referencedColumnName: 'device_id' })
+  @JoinColumn({ name: 'device_id', referencedColumnName: 'deviceId' })
   device?: Device | null;
 }

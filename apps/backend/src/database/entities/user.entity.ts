@@ -73,6 +73,6 @@ export class User {
   @OneToMany(() => DeviceRequest, (r) => r.rejecter)
   rejectedDeviceRequests!: DeviceRequest[];
 
-  @OneToMany(() => ContentEntity, (c: ContentEntity) => c.updated_by_user!)
+  @OneToMany(() => ContentEntity, (c: ContentEntity) => c.updatedByUser!)
   contentsUpdated!: ContentEntity[];
 }

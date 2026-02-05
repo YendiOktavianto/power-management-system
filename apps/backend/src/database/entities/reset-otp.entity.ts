@@ -2,9 +2,9 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Index } 
 import { User } from './user.entity';
 
 @Entity('reset_otp')
-@Index('idx_reset_otp_exp', ['expires_at'])
+@Index('idx_reset_otp_exp', ['expiresAt'])
 export class ResetOtp {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid', { name: 'otp_id' })
   otpId!: string;
 
   @Column({ name: 'user_id', type: 'uuid' })

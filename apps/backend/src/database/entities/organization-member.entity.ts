@@ -49,7 +49,7 @@ export class OrganizationMember {
   deletedAt?: Date | null;
 
   @ManyToOne(() => Organization, (org) => org.members, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'org_id', referencedColumnName: 'org_id' })
+  @JoinColumn({ name: 'org_id', referencedColumnName: 'orgId' })
   organization!: Organization;
 
   @ManyToOne(() => User, (u) => u.organizationMemberships, { onDelete: 'CASCADE' })

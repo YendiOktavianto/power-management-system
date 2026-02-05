@@ -14,8 +14,8 @@ import { ResetOtp } from './entities/reset-otp.entity';
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
       entities: [User, ResetOtp],
-      autoLoadEntities: true, // otomatis load semua *.entity.ts
-      synchronize: false, // jangan auto-sync, pakai migration
+      autoLoadEntities: true,
+      synchronize: false,
     }),
   ],
 })
