@@ -15,9 +15,9 @@ export class AddressesLocations0002 implements MigrationInterface {
         "subdistrict" character varying,
         "postal_code" character varying,
         "is_active" boolean NOT NULL DEFAULT true,
-        "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "deleted_at" TIMESTAMP WITH TIME ZONE,
+        "created_at" timestamptz NOT NULL DEFAULT now(),
+        "updated_at" timestamptz NOT NULL DEFAULT now(),
+        "deleted_at" timestamptz,
         CONSTRAINT "PK_addresses_address_id" PRIMARY KEY ("address_id")
       )
     `);
@@ -30,15 +30,16 @@ export class AddressesLocations0002 implements MigrationInterface {
         "detail_address" character varying,
         "segment" character varying,
         "is_active" boolean NOT NULL DEFAULT true,
-        "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "deleted_at" TIMESTAMP WITH TIME ZONE,
+        "created_at" timestamptz NOT NULL DEFAULT now(),
+        "updated_at" timestamptz NOT NULL DEFAULT now(),
+        "deleted_at" timestamptz,
         CONSTRAINT "PK_locations_location_id" PRIMARY KEY ("location_id")
       )
     `);
-    await queryRunner.query(
-      `ALTER TABLE "locations" ADD CONSTRAINT "FK_locations_address" FOREIGN KEY ("address_id") REFERENCES "addresses"("address_id") ON DELETE RESTRICT ON UPDATE NO ACTION`,
-    );
+    await queryRunner.query(`
+      ALTER TABLE "locations"
+      ADD CONSTRAINT "FK_locations_address" FOREIGN KEY ("address_id") REFERENCES "addresses"("address_id") ON DELETE RESTRICT ON UPDATE NO ACTION
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
