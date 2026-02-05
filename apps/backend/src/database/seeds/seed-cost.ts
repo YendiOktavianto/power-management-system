@@ -4,16 +4,6 @@ import dataSource from '../ormconfig'; // sesuaikan path DataSource kamu
 async function main() {
   const ds: DataSource = await dataSource.initialize();
   await ds.query(`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes
-        WHERE schemaname = 'public' AND indexname = 'uq_cost_group_limit'
-      ) THEN
-        CREATE UNIQUE INDEX uq_cost_group_limit ON cost (tariff_group, power_limit);
-      END IF;
-    END$$;
-
     WITH seed_cost (tariff_group, power_limit) AS (
       VALUES
         ('R-1/TR','900 VA'),
@@ -66,7 +56,41 @@ async function main() {
         AND ch.valid_from = hs.valid_from
         AND ch.valid_to = hs.valid_to
     );
-
+  `);
+  await ds.query(`
+    WITH seed_cost (tariff_group, power_limit) AS (
+      VALUES
+        ('R-1/TR','900 VA'),
+        ('R-1/TR','1300 VA'),
+        ('R-1/TR','2200 VA'),
+        ('R-2/TR','3500-5500 VA'),
+        ('R-3/TR','>6600 VA')
+    ),
+    all_cost AS (
+      SELECT c.cost_id, c.tariff_group::text AS tariff_group, c.power_limit
+      FROM cost c
+      JOIN seed_cost s
+        ON s.tariff_group = c.tariff_group::text
+       AND s.power_limit  = c.power_limit
+    ),
+    history_seed (tariff_group, power_limit, cost_value, valid_from, valid_to) AS (
+      VALUES
+        ('R-1/TR','900 VA',       1352.00, DATE '2025-11-06', DATE '2025-11-25'),
+        ('R-1/TR','1300 VA',      1444.70, DATE '2025-11-06', DATE '2025-11-30'),
+        ('R-1/TR','2200 VA',      1444.70, DATE '2025-11-06', DATE '2025-11-24'),
+        ('R-2/TR','3500-5500 VA', 1699.53, DATE '2025-11-06', DATE '2025-12-01')
+    ),
+    active_seed AS (
+      SELECT DISTINCT ON (tariff_group, power_limit)
+        tariff_group,
+        power_limit,
+        cost_value,
+        valid_to AS valid_from,
+        NULL::date AS valid_to
+      FROM history_seed
+      WHERE valid_to IS NOT NULL
+      ORDER BY tariff_group, power_limit, valid_to DESC
+    )
     INSERT INTO cost_history (cost_id, cost_value, valid_from, valid_to, created_at)
     SELECT ac.cost_id, a.cost_value, a.valid_from, a.valid_to, now()
     FROM all_cost ac
