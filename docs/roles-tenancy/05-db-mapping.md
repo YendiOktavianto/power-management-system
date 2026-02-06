@@ -66,10 +66,11 @@ Relasi organizations <-> users:
 - Admin global boleh tidak punya membership.
 - Owner account biasanya menjadi member pada org type OWNER.
 
-## Keputusan MVP (1 rumah = 1 akun)
-- Untuk customer, 1 rumah = 1 akun user.
-- Saat user registrasi (role_global USER), sistem otomatis membuat organization type CUSTOMER
-  dan organization_members dengan role_in_org CUSTOMER.
+## Keputusan Akun & Provisioning (Final)
+- Tidak ada self‑register untuk role tinggi.
+- ADMIN dan OWNER dibuat dari awal (fixed jumlah akun).
+- PRINCIPAL dan COMPANY dibuat serta dimaintain oleh ADMIN/OWNER.
+- CUSTOMER dibuat dan dimaintain oleh masing‑masing COMPANY.
 - Untuk organisasi OWNER/PRINCIPAL/COMPANY, satu org bisa punya beberapa user
   (contoh: owner internal dan testing).
 - Rule device: 1 customer org hanya boleh memiliki 1 device aktif (policy aplikasi).

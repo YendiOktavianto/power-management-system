@@ -1,21 +1,21 @@
 # User Flows (High Level)
 
-## 1) Admin Provisioning
-- Developer membuat akun Admin secara manual (seed/provisioning).
-- Tidak ada proses registrasi Admin di aplikasi.
+## 1) Admin & Owner Provisioning
+- Admin dan Owner dibuat dari awal (seed/provisioning) dan jumlahnya fixed.
+- Tidak ada proses registrasi Admin/Owner di aplikasi.
 
-## 2) Setup Organisasi oleh Owner
-- Owner membuat Principal.
-- Owner membuat Company di bawah Principal.
-- Owner membuat Customer di bawah Company.
-- Owner atau Principal melakukan assign device ke Customer.
+## 2) Setup Organisasi oleh Admin/Owner
+- Admin/Owner membuat Principal.
+- Admin/Owner membuat Company di bawah Principal.
+- Company membuat Customer di bawahnya.
+- Owner/Principal/Company melakukan assign device ke Customer (sesuai scope).
 
 ## 3) Operasional Principal
 - Principal mengelola Company dan Customer pada branch miliknya.
 - Principal memantau device pada scope branch tersebut.
 
 ## 4) Operasional Company
-- Company membuat dan mengelola Customer yang mereka reach.
+- Company membuat dan mengelola Customer yang berada di bawahnya.
 - Company memantau device milik Customer di bawahnya.
 
 ## 5) Customer Monitoring
