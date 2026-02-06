@@ -1,5 +1,6 @@
-import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
+import { Column, Entity, Index, ManyToOne, OneToMany, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
+import { SessionEvent } from './session-event.entity';
 
 @Entity('refresh_sessions')
 export class RefreshSession {
@@ -41,4 +42,7 @@ export class RefreshSession {
   @ManyToOne(() => User, (u) => u.refreshSessions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'userId' })
   user!: User;
+
+  @OneToMany(() => SessionEvent, (e) => e.refreshSession)
+  sessionEvents!: SessionEvent[];
 }

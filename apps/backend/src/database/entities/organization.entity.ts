@@ -2,6 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColum
 import { OrganizationMember } from './organization-member.entity';
 import { Device } from './device.entity';
 import { DeviceRequest } from './device-request.entity';
+import { AccountInvite } from './account-invite.entity';
+import { AuditLog } from './audit-log.entity';
 
 export enum OrganizationType {
   OWNER = 'OWNER',
@@ -54,4 +56,10 @@ export class Organization {
 
   @OneToMany(() => DeviceRequest, (r) => r.target_org)
   deviceRequestsTarget!: DeviceRequest[];
+
+  @OneToMany(() => AccountInvite, (i) => i.organization)
+  accountInvites!: AccountInvite[];
+
+  @OneToMany(() => AuditLog, (l) => l.actorOrg)
+  auditLogs!: AuditLog[];
 }

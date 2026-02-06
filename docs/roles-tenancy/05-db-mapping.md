@@ -248,3 +248,242 @@ Detail kolom (migrations):
 - devices.owner_org_id -> organizations.org_id (type CUSTOMER).
 - devices.provisioned_by_user_id -> users.user_id (nullable).
 - telemetry_readings.device_id -> devices.device_id.
+- telemetry_readings.cost_id -> cost.cost_id (nullable).
+- cost_history.cost_id -> cost.cost_id.
+- device_requests.requester_user_id -> users.user_id.
+- device_requests.requester_org_id -> organizations.org_id.
+- device_requests.target_org_id -> organizations.org_id.
+- device_requests.address_id -> addresses.address_id (nullable).
+- device_requests.approved_by -> users.user_id (nullable).
+- device_requests.rejected_by -> users.user_id (nullable).
+- device_requests.device_id -> devices.device_id (nullable).
+- contents.updated_by -> users.user_id (nullable).
+- refresh_sessions.user_id -> users.user_id.
+- reset_otp.user_id -> users.user_id.
+
+## Seeder (Cost & Cost History)
+- Seeder ada di `apps/backend/src/database/seeds/seed-cost.ts`.
+- Jalankan dari folder `apps/backend`:
+  - `npm run db:seed -- src/database/seeds/seed-cost.ts`
+- Mengisi tabel `cost` dan `cost_history` jika belum ada data (idempotent).
+
+## Tabel Tambahan (Account Invites & Audit Logs)
+
+### account_invites
+Digunakan untuk aktivasi/set password pertama kali agar pembuat akun tidak mengetahui password user.
+
+**Kolom utama:**
+- invite_id (uuid): primary key.
+- user_id (uuid): FK ke users.user_id (akun yang di‑invite).
+- created_by_user_id (uuid): FK ke users.user_id (pembuat invite).
+- org_id (uuid, nullable): FK ke organizations.org_id (konteks org).
+- purpose (enum SET_PASSWORD / ACTIVE): tujuan invite.
+- token_hash (varchar, unique): hash token invite.
+- expires_at (timestamptz): waktu kadaluarsa.
+- used_at (timestamptz, nullable): waktu dipakai.
+- sent_to (varchar): email/nomor tujuan.
+- user_agent (varchar, nullable): user agent saat request.
+- created_at (timestamptz, default now()): waktu dibuat.
+
+**Relasi:**
+- users (1) -> account_invites (N) via user_id.
+- users (1) -> account_invites (N) via created_by_user_id.
+- organizations (1) -> account_invites (N) via org_id (nullable).
+
+### audit_logs
+Mencatat aksi penting untuk audit keamanan dan jejak perubahan.
+
+**Kolom utama:**
+- audit_id (uuid): primary key.
+- actor_user_id (uuid): FK ke users.user_id (pelaku aksi).
+- actor_org_id (uuid, nullable): FK ke organizations.org_id (konteks org).
+- action (enum audit_action_enum): jenis aksi.
+- target_type (enum audit_target_type_enum): jenis target.
+- target_id (uuid, nullable): id target (polimorfik, tidak FK).
+- status (enum SUCCESS / FAILED): status aksi.
+- ip (varchar, nullable): ip pelaku.
+- user_agent (varchar, nullable): user agent pelaku.
+- metadata (jsonb): data tambahan.
+- created_at (timestamptz, default now()): waktu dibuat.
+
+**Relasi:**
+- users (1) -> audit_logs (N) via actor_user_id.
+- organizations (1) -> audit_logs (N) via actor_org_id (nullable).
+- target_id bersifat polimorfik (tanpa FK).
+
+### login_attempts
+Mencatat percobaan login untuk deteksi brute force.
+
+**Kolom utama:**
+- attempt_id (uuid): primary key.
+- user_id (uuid, nullable): FK ke users.user_id (jika user dikenali).
+- identifier (varchar): email/username yang dicoba.
+- success (boolean): status berhasil/gagal.
+- ip (varchar, nullable): ip pelaku.
+- user_agent (varchar, nullable): user agent pelaku.
+- created_at (timestamptz, default now()): waktu dibuat.
+
+**Relasi:**
+- users (1) -> login_attempts (N) via user_id (nullable).
+
+### session_event
+Mencatat event pada refresh session (issue/refresh/revoke).
+
+**Kolom utama:**
+- event_id (uuid): primary key.
+- refresh_session_id (uuid): FK ke refresh_sessions.refresh_session_id.
+- user_id (uuid): FK ke users.user_id.
+- event (enum ISSUED / REFRESHED / REVOKED / REPLACED).
+- ip (varchar, nullable): ip pelaku.
+- user_agent (varchar, nullable): user agent pelaku.
+- created_at (timestamptz, default now()): waktu dibuat.
+
+**Relasi:**
+- refresh_sessions (1) -> session_event (N).
+- users (1) -> session_event (N).
+
+## Audit Logs (Enums)
+
+Jika `action` dan `target_type` dipakai sebagai enum di DB, gunakan daftar berikut
+sebagai baseline lengkap. Anda bisa mengurangi jika ingin lebih minimal, tapi daftar
+ini aman untuk kebutuhan sekarang dan ekspansi ke depan.
+
+### Enum `audit_action_enum`
+
+**Auth & Security**
+- AUTH_LOGIN_SUCCESS
+- AUTH_LOGIN_FAILED
+- AUTH_LOGOUT
+- AUTH_LOGOUT_ALL
+- AUTH_REFRESH_TOKEN
+- AUTH_TOKEN_REVOKED
+- AUTH_PASSWORD_RESET_REQUEST
+- AUTH_PASSWORD_RESET_VERIFY
+- AUTH_PASSWORD_RESET_COMPLETE
+- AUTH_ACCOUNT_INVITE_CREATED
+- AUTH_ACCOUNT_INVITE_SENT
+- AUTH_ACCOUNT_INVITE_USED
+- AUTH_ACCOUNT_INVITE_EXPIRED
+- AUTH_ACCOUNT_ACTIVATED
+- AUTH_ACCOUNT_DEACTIVATED
+
+**User**
+- USER_CREATED
+- USER_UPDATED
+- USER_DELETED
+- USER_STATUS_UPDATED
+- USER_ROLE_UPDATED
+- USER_PASSWORD_CHANGED
+- USER_PROFILE_UPDATED
+- USER_PHONE_UPDATED
+- USER_EMAIL_UPDATED
+- USER_AVATAR_UPDATED
+- USER_LOGIN_DISABLED
+- USER_LOGIN_ENABLED
+
+**Organization**
+- ORG_CREATED
+- ORG_UPDATED
+- ORG_DELETED
+- ORG_STATUS_UPDATED
+- ORG_PARENT_CHANGED
+- ORG_TYPE_CHANGED
+
+**Organization Members**
+- ORG_MEMBER_ADDED
+- ORG_MEMBER_UPDATED
+- ORG_MEMBER_REMOVED
+- ORG_MEMBER_ROLE_CHANGED
+- ORG_MEMBER_STATUS_CHANGED
+
+**Device**
+- DEVICE_CREATED
+- DEVICE_UPDATED
+- DEVICE_DELETED
+- DEVICE_STATUS_UPDATED
+- DEVICE_ASSIGNED
+- DEVICE_UNASSIGNED
+- DEVICE_PROVISIONED
+- DEVICE_UNPROVISIONED
+- DEVICE_TRANSFERRED
+
+**Device Requests**
+- DEVICE_REQUEST_CREATED
+- DEVICE_REQUEST_UPDATED
+- DEVICE_REQUEST_APPROVED
+- DEVICE_REQUEST_REJECTED
+- DEVICE_REQUEST_CANCELLED
+- DEVICE_REQUEST_DELETED
+
+**Address & Location**
+- ADDRESS_CREATED
+- ADDRESS_UPDATED
+- ADDRESS_DELETED
+- LOCATION_CREATED
+- LOCATION_UPDATED
+- LOCATION_DELETED
+
+**Telemetry**
+- TELEMETRY_INGEST_SUCCESS
+- TELEMETRY_INGEST_FAILED
+- TELEMETRY_EXPORT
+- TELEMETRY_DELETED
+
+**Cost**
+- COST_CREATED
+- COST_UPDATED
+- COST_DELETED
+- COST_HISTORY_CREATED
+- COST_HISTORY_UPDATED
+- COST_HISTORY_DELETED
+
+**Content / CMS**
+- CONTENT_CREATED
+- CONTENT_UPDATED
+- CONTENT_DELETED
+- CONTENT_PUBLISHED
+- CONTENT_UNPUBLISHED
+
+**File / Upload**
+- FILE_UPLOADED
+- FILE_DELETED
+- FILE_REPLACED
+
+**Report & Export**
+- REPORT_GENERATED
+- REPORT_EXPORTED
+- REPORT_DELETED
+
+**System / Ops**
+- SYSTEM_CONFIG_UPDATED
+- SYSTEM_MAINTENANCE_MODE_ON
+- SYSTEM_MAINTENANCE_MODE_OFF
+- DATA_BACKUP_CREATED
+- DATA_RESTORE_EXECUTED
+- DATA_MIGRATION_RUN
+
+### Enum `audit_target_type_enum`
+
+**Core Entities**
+- USER
+- ORGANIZATION
+- ORGANIZATION_MEMBER
+- DEVICE
+- DEVICE_REQUEST
+- LOCATION
+- ADDRESS
+- TELEMETRY_READING
+- COST
+- COST_HISTORY
+- CONTENT
+- REFRESH_SESSION
+- RESET_OTP
+- ACCOUNT_INVITE
+- AUDIT_LOG
+
+**Support/System**
+- SYSTEM_CONFIG
+- FILE_UPLOAD
+- REPORT
+- EXPORT
+- IMPORT

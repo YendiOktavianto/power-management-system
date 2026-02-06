@@ -5,6 +5,10 @@ import { OrganizationMember } from './organization-member.entity';
 import { Device } from './device.entity';
 import { DeviceRequest } from './device-request.entity';
 import { ContentEntity } from './content.entity';
+import { AccountInvite } from './account-invite.entity';
+import { AuditLog } from './audit-log.entity';
+import { LoginAttempt } from './login-attempt.entity';
+import { SessionEvent } from './session-event.entity';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
@@ -75,4 +79,19 @@ export class User {
 
   @OneToMany(() => ContentEntity, (c: ContentEntity) => c.updatedByUser!)
   contentsUpdated!: ContentEntity[];
+
+  @OneToMany(() => AccountInvite, (i) => i.user)
+  accountInvites!: AccountInvite[];
+
+  @OneToMany(() => AccountInvite, (i) => i.createdByUser)
+  createdAccountInvites!: AccountInvite[];
+
+  @OneToMany(() => AuditLog, (l) => l.actorUser)
+  auditLogs!: AuditLog[];
+
+  @OneToMany(() => LoginAttempt, (a) => a.user)
+  loginAttempts!: LoginAttempt[];
+
+  @OneToMany(() => SessionEvent, (e) => e.user)
+  sessionEvents!: SessionEvent[];
 }
