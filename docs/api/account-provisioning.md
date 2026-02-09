@@ -152,3 +152,35 @@ Dalam satu transaction:
 3) Insert organization_members (role_in_org + INACTIVE).
 4) Insert account_invites + kirim token.
 5) Insert audit_logs.
+
+---
+
+## 5) Prinsip ACID dan Titik Implementasi
+
+ACID adalah prinsip transaksi database agar data tetap aman dan konsisten:
+- Atomicity: semua langkah dalam transaksi sukses semua, atau gagal semua.
+- Consistency: data tetap valid sesuai rule bisnis dan constraint DB.
+- Isolation: transaksi berjalan terpisah dari transaksi lain yang sedang berjalan.
+- Durability: setelah commit, data tersimpan permanen.
+
+Tempat implementasi pada fitur provisioning:
+- Entry transaksi: `apps/backend/src/modules/auth/auth.service.ts` pada method `provisionUser`, blok `this.dataSource.transaction(...)`.
+- Seluruh operasi tulis dijalankan dalam satu transaksi:
+  1) insert `users`
+  2) insert `organizations`
+  3) insert `organization_members`
+  4) insert `account_invites`
+  5) insert `audit_logs`
+- Jika ada 1 langkah gagal, TypeORM akan rollback seluruh langkah sebelumnya (Atomicity).
+
+Kenapa repository harus dari transaction manager:
+- Di dalam transaksi, repository harus diambil dari `manager.getRepository(...)`, bukan repository global `this.users`/`this.organizations`.
+- Tujuannya agar semua query benar-benar berada pada context transaksi yang sama.
+- Jika mencampur repo global dan repo transaction-scoped, ada risiko sebagian query tidak ikut rollback/commit yang sama, sehingga melanggar konsistensi transaksi.
+
+---
+
+## 6) Dokumen Testing
+
+Test plan lengkap (data uji, expected response, validasi DB, dan sheet DONE/NOT DONE) ada di:
+- `docs/api/account-provisioning-testing.md`
