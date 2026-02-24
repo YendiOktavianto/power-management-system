@@ -24,34 +24,34 @@ export enum UserStatus {
 @Unique(['email', 'username'])
 export class User {
   @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
-  userId: string;
+  userId!: string;
 
   @Column({ name: 'username', length: 60 })
-  username: string;
+  username!: string;
 
   @Column({ name: 'email' })
-  email: string;
+  email!: string;
 
   @Column({ name: 'phone_number', nullable: true })
   phoneNumber?: string;
 
   @Column({ name: 'password_hash' })
-  passwordHash: string;
+  passwordHash!: string;
 
   @Column({ name: 'role_global', type: 'enum', enum: UserRole, default: UserRole.USER })
-  role: UserRole;
+  role!: UserRole;
 
   @Column({ name: 'profil_img', nullable: true })
   profileImg?: string;
 
   @Column({ name: 'status', type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
-  status: UserStatus;
+  status!: UserStatus;
 
   @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
   deletedAt?: Date;

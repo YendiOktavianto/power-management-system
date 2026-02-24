@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "cross-env PORT=4000 nest start --watch",
+    "dev": "cross-env PORT=4001 nest start --watch",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -22,7 +22,8 @@
     "mg:gen": "npm run typeorm -- migration:generate",
     "mg:run": "npm run typeorm -- migration:run",
     "mg:revert": "npm run typeorm -- migration:revert",
-    "db:seed": "ts-node -r tsconfig-paths/register"
+    "db:seed": "ts-node -r tsconfig-paths/register",
+    "db:seed:auth-bootstrap": "npm run db:seed -- src/database/seeds/seed-auth-bootstrap.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

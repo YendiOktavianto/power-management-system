@@ -1,9 +1,9 @@
 # Account Provisioning API Testing
 
 Dokumen ini khusus untuk pengujian endpoint provisioning:
-- `POST /provisioning/principals`
-- `POST /provisioning/companies`
-- `POST /provisioning/customers`
+- `POST /auth/provisioning/principals`
+- `POST /auth/provisioning/companies`
+- `POST /auth/provisioning/customers`
 
 Tujuan pengujian:
 - Memastikan policy role berjalan benar (siapa boleh create siapa).
@@ -27,6 +27,34 @@ Tujuan pengujian:
 - Optional:
   - Set `INVITE_DEBUG=true` untuk menampilkan `inviteToken` pada response sukses.
 
+### Bootstrap Seeder (wajib jika DB kosong)
+
+Jalankan seed bootstrap berikut:
+
+```bash
+cd apps/backend
+npm run db:seed -- src/database/seeds/seed-auth-bootstrap.ts
+```
+
+Seeder ini akan membuat:
+- 1 org OWNER: `PT Innotech Global Solusindo`
+- 4 user:
+  - Admin / Developer (`role_global=ADMIN`)
+  - Tri Wardiyanto (`role_global=USER`, member OWNER)
+  - Owner (`role_global=USER`, member OWNER)
+  - Testing Account (`role_global=USER`, member OWNER)
+
+Output seeder menampilkan JSON untuk langsung di-copy ke environment Postman:
+- `owner_org_id`
+- `admin_user_id`
+- `owner_user_id`
+- `tri_owner_user_id`
+- `testing_owner_user_id`
+
+Default password seluruh akun bootstrap:
+- `PmsLocal#12345`
+- bisa diubah lewat env `BOOTSTRAP_AUTH_PASSWORD`
+
 ---
 
 ## 2) Environment Variables Postman
@@ -40,6 +68,18 @@ Tujuan pengujian:
 - `company_org_id`
 - `unknown_user_id` -> UUID random yang tidak ada di DB
 - `unknown_org_id` -> UUID random yang tidak ada di DB
+
+### Mapping Actor untuk Endpoint
+
+- `POST /auth/provisioning/principals`
+  - actor valid: `admin_user_id` atau `owner_user_id`
+  - `parentOrgId`: `owner_org_id`
+- `POST /auth/provisioning/companies`
+  - actor valid: `admin_user_id` atau `owner_user_id`
+  - `parentOrgId`: `principal_org_id`
+- `POST /auth/provisioning/customers`
+  - actor valid: `company_user_id` (member COMPANY di `company_org_id`)
+  - `parentOrgId`: `company_org_id`
 
 ---
 
@@ -158,21 +198,21 @@ Isi kolom `Result` dengan `DONE` / `NOT DONE` / `FAILED`.
 
 | ID | Endpoint | Skenario | Setup / Input | Expected |
 |---|---|---|---|---|
-| TC-PR-001 | `/provisioning/principals` | Sukses via ADMIN | `x-actor-user-id={{admin_user_id}}`, `parentOrgId={{owner_org_id}}` | `201`, `roleInOrg=PRINCIPAL`, status `INACTIVE`, 5 tabel terisi |
-| TC-PR-002 | `/provisioning/principals` | Sukses via OWNER | `x-actor-user-id={{owner_user_id}}`, `parentOrgId={{owner_org_id}}` | `201`, hasil sama seperti TC-PR-001 |
-| TC-PR-003 | `/provisioning/principals` | Forbidden role | actor user biasa / company | `403` |
-| TC-PR-004 | `/provisioning/principals` | Parent org tidak ada | `parentOrgId={{unknown_org_id}}` | `422`, `parentOrgId not found.` |
-| TC-PR-005 | `/provisioning/principals` | Parent type salah | `parentOrgId={{principal_org_id}}` | `422`, `parentOrgId must be OWNER.` |
-| TC-CO-001 | `/provisioning/companies` | Sukses via ADMIN | actor admin, parent principal | `201`, `roleInOrg=COMPANY`, status `INACTIVE` |
-| TC-CO-002 | `/provisioning/companies` | Sukses via OWNER | actor owner, parent principal | `201` |
-| TC-CO-003 | `/provisioning/companies` | Forbidden role | actor company / user biasa | `403` |
-| TC-CO-004 | `/provisioning/companies` | Parent org tidak ada | `parentOrgId={{unknown_org_id}}` | `422` |
-| TC-CO-005 | `/provisioning/companies` | Parent type salah | `parentOrgId={{owner_org_id}}` atau company org | `422`, `must be PRINCIPAL` |
-| TC-CU-001 | `/provisioning/customers` | Sukses via COMPANY member | actor company member, parent company org yang sama | `201`, `roleInOrg=CUSTOMER`, status `INACTIVE` |
-| TC-CU-002 | `/provisioning/customers` | Forbidden non-company | actor admin/owner/user biasa | `403` |
-| TC-CU-003 | `/provisioning/customers` | Company actor tapi bukan member org tersebut | actor company lain | `403` |
-| TC-CU-004 | `/provisioning/customers` | Parent org tidak ada | unknown org | `422` |
-| TC-CU-005 | `/provisioning/customers` | Parent type salah | parent principal/owner | `422`, `must be COMPANY` |
+| TC-PR-001 | `/auth/provisioning/principals` | Sukses via ADMIN | `x-actor-user-id={{admin_user_id}}`, `parentOrgId={{owner_org_id}}` | `201`, `roleInOrg=PRINCIPAL`, status `INACTIVE`, 5 tabel terisi |
+| TC-PR-002 | `/auth/provisioning/principals` | Sukses via OWNER | `x-actor-user-id={{owner_user_id}}`, `parentOrgId={{owner_org_id}}` | `201`, hasil sama seperti TC-PR-001 |
+| TC-PR-003 | `/auth/provisioning/principals` | Forbidden role | actor user biasa / company | `403` |
+| TC-PR-004 | `/auth/provisioning/principals` | Parent org tidak ada | `parentOrgId={{unknown_org_id}}` | `422`, `parentOrgId not found.` |
+| TC-PR-005 | `/auth/provisioning/principals` | Parent type salah | `parentOrgId={{principal_org_id}}` | `422`, `parentOrgId must be OWNER.` |
+| TC-CO-001 | `/auth/provisioning/companies` | Sukses via ADMIN | actor admin, parent principal | `201`, `roleInOrg=COMPANY`, status `INACTIVE` |
+| TC-CO-002 | `/auth/provisioning/companies` | Sukses via OWNER | actor owner, parent principal | `201` |
+| TC-CO-003 | `/auth/provisioning/companies` | Forbidden role | actor company / user biasa | `403` |
+| TC-CO-004 | `/auth/provisioning/companies` | Parent org tidak ada | `parentOrgId={{unknown_org_id}}` | `422` |
+| TC-CO-005 | `/auth/provisioning/companies` | Parent type salah | `parentOrgId={{owner_org_id}}` atau company org | `422`, `must be PRINCIPAL` |
+| TC-CU-001 | `/auth/provisioning/customers` | Sukses via COMPANY member | actor company member, parent company org yang sama | `201`, `roleInOrg=CUSTOMER`, status `INACTIVE` |
+| TC-CU-002 | `/auth/provisioning/customers` | Forbidden non-company | actor admin/owner/user biasa | `403` |
+| TC-CU-003 | `/auth/provisioning/customers` | Company actor tapi bukan member org tersebut | actor company lain | `403` |
+| TC-CU-004 | `/auth/provisioning/customers` | Parent org tidak ada | unknown org | `422` |
+| TC-CU-005 | `/auth/provisioning/customers` | Parent type salah | parent principal/owner | `422`, `must be COMPANY` |
 | TC-CM-001 | semua endpoint | Missing `x-actor-user-id` | header tidak dikirim | `400`, `Missing x-actor-user-id header.` |
 | TC-CM-002 | semua endpoint | Actor user tidak ditemukan | `x-actor-user-id={{unknown_user_id}}` | `400`, `Actor user not found.` (khusus principal/company flow) |
 | TC-CM-003 | semua endpoint | Duplicate email | pakai email existing | `409`, `Email/username/phone already in use.` |

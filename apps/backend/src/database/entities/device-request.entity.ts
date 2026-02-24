@@ -13,28 +13,28 @@ export enum DeviceRequestStatus {
 @Entity({ name: 'device_requests' })
 export class DeviceRequest {
   @PrimaryGeneratedColumn('uuid', { name: 'request_id' })
-  request_id!: string;
+  requestId!: string;
 
   @Column({ name: 'requester_user_id', type: 'uuid' })
-  requester_user_id!: string;
+  requesterUserId!: string;
 
   @Column({ name: 'requester_org_id', type: 'uuid' })
-  requester_org_id!: string;
+  requesterOrgId!: string;
 
   @Column({ name: 'target_org_id', type: 'uuid' })
-  target_org_id!: string;
+  targetOrgId!: string;
 
   @Column({ name: 'address_id', type: 'uuid', nullable: true })
-  address_id?: string | null;
+  addressId?: string | null;
 
   @Column({ name: 'address_name', type: 'varchar', nullable: true })
-  address_name?: string | null;
+  addressName?: string | null;
 
   @Column({ name: 'detail_address', type: 'varchar', nullable: true })
-  detail_address?: string | null;
+  detailAddress?: string | null;
 
   @Column({ name: 'location_label', type: 'varchar', nullable: true })
-  location_label?: string | null;
+  locationLabel?: string | null;
 
   @Column({ name: 'longitude', type: 'double precision' })
   longitude!: number;
@@ -51,28 +51,28 @@ export class DeviceRequest {
   status!: DeviceRequestStatus;
 
   @Column({ name: 'approved_by', type: 'uuid', nullable: true })
-  approved_by?: string | null;
+  approvedBy?: string | null;
 
   @Column({ name: 'approved_at', type: 'timestamptz', nullable: true })
-  approved_at?: Date | null;
+  approvedAt?: Date | null;
 
   @Column({ name: 'rejected_by', type: 'uuid', nullable: true })
-  rejected_by?: string | null;
+  rejectedBy?: string | null;
 
   @Column({ name: 'rejected_at', type: 'timestamptz', nullable: true })
-  rejected_at?: Date | null;
+  rejectedAt?: Date | null;
 
   @Column({ name: 'note', type: 'text', nullable: true })
   note?: string | null;
 
   @Column({ name: 'device_id', type: 'uuid', nullable: true })
-  device_id?: string | null;
+  deviceId?: string | null;
 
   @Column({ name: 'created_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at!: Date;
+  createdAt!: Date;
 
   @Column({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at!: Date;
+  updatedAt!: Date;
 
   @ManyToOne(() => User, (u) => u.deviceRequests, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'requester_user_id', referencedColumnName: 'userId' })
@@ -80,11 +80,11 @@ export class DeviceRequest {
 
   @ManyToOne(() => Organization, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'requester_org_id', referencedColumnName: 'orgId' })
-  requester_org!: Organization;
+  requesterOrg!: Organization;
 
   @ManyToOne(() => Organization, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'target_org_id', referencedColumnName: 'orgId' })
-  target_org!: Organization;
+  targetOrg!: Organization;
 
   @ManyToOne(() => Address, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'address_id', referencedColumnName: 'addressId' })

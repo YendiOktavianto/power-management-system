@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 import 'dotenv/config';
-import { User } from './entities/user.entity';
-import { ResetOtp } from './entities/reset-otp.entity';
 
 @Module({
   imports: [
@@ -13,9 +12,9 @@ import { ResetOtp } from './entities/reset-otp.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, ResetOtp],
-      autoLoadEntities: true,
+      entities: [join(__dirname, 'entities', '**/*.entity.{ts,js}')],
       synchronize: false,
+      autoLoadEntities: false,
     }),
   ],
 })

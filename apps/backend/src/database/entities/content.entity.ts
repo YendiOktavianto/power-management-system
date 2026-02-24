@@ -8,7 +8,7 @@ export class ContentEntity {
 
   @Index({ unique: true })
   @Column({ type: 'varchar', length: 120 })
-  key: string;
+  key!: string;
 
   @Column({ type: process.env.DB_TYPE === 'mysql' ? 'json' : 'jsonb' })
   data!: Record<string, any>;
@@ -27,5 +27,5 @@ export class ContentEntity {
 
   @ManyToOne(() => User, (u) => u.contentsUpdated, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'updated_by', referencedColumnName: 'userId' })
-  updatedByUser: User | null;
+  updatedByUser?: User | null;
 }

@@ -51,10 +51,10 @@ export class Organization {
   @OneToMany(() => Device, (d) => d.ownerOrg)
   devices!: Device[];
 
-  @OneToMany(() => DeviceRequest, (r) => r.requester_org)
+  @OneToMany(() => DeviceRequest, (r) => r.requesterOrg)
   deviceRequestsRequester!: DeviceRequest[];
 
-  @OneToMany(() => DeviceRequest, (r) => r.target_org)
+  @OneToMany(() => DeviceRequest, (r) => r.targetOrg)
   deviceRequestsTarget!: DeviceRequest[];
 
   @OneToMany(() => AccountInvite, (i) => i.organization)
