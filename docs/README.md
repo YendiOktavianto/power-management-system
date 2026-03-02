@@ -49,6 +49,8 @@ Tujuan utama sistem ini adalah menyediakan data kelistrikan yang **realtime, ter
 
 - Architecture & Data Flow: `docs/architecture/`
 - API Contract (OpenAPI): `docs/api/openapi.md`
+- API Testing Master (Postman): `docs/api/postman-testing-master.md`
+- API Testing Folder 01 per Role: `docs/api/postman-folder-01-role-requests.md`
 - Runbooks (Dev/Deploy/Ops): `docs/runbooks/`
 - ADR (Architecture Decisions): `docs/adr/`
 

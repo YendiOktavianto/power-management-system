@@ -83,6 +83,46 @@ Default password seluruh akun bootstrap:
 
 ---
 
+## 2A) Struktur Folder Postman (Terkini)
+
+Koleksi utama:
+- `Backend - Power Management System`
+
+Struktur folder aktif saat ini:
+
+```text
+00 - Health & Setup
+01 - Auth Provisioning (Role Creation)
+02 - Auth Activation & Session
+11 - Role Admin_Programmer
+12 - Role Owner
+13 - Role Principal
+14 - Role Company
+15 - Role Customer
+03 - Users
+04 - Organizations
+05 - Organization Members
+06 - Device Requests
+```
+
+Catatan penggunaan folder:
+- Folder `01` dipakai untuk test create account/organization (principal, company, customer) dan negative case provisioning.
+- Folder `02` dipakai untuk flow aktivasi + session umum (`set-password`, `login`, `refresh`, `logout`, dan negative case session).
+- Folder `11` sampai `15` dipakai untuk request per-role agar token/session tidak saling menimpa.
+
+Template nama request per-role:
+- `POST HP - Login <Role>`
+- `POST HP - Refresh <Role>`
+- `POST HP - Logout <Role>`
+
+Aturan update jika ada endpoint baru:
+- Jika endpoint terkait provisioning account, tambahkan di folder `01`.
+- Jika endpoint terkait aktivasi atau manajemen session, tambahkan di folder `02`.
+- Jika endpoint perlu token terpisah per-role, buat request terpisah di folder role (`11`-`15`).
+- Setelah menambah folder/request baru di Postman, update bagian ini agar struktur dokumentasi tetap sinkron.
+
+---
+
 ## 3) Template Request
 
 Header wajib:
